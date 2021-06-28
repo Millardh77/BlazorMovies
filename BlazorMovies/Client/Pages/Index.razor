@@ -1,32 +1,32 @@
 ﻿@page "/"
 
+@inject SingletonService singleton
+@inject IRepository repository
+
+<p>Singleton count: @singleton.Value</p>
+
 <div>
     <h3>Movie</h3>
- <MoviesList Movies="movies">
-     <NullTemplate>
-         <span style="color: red">This is loading...</span>
-     </NullTemplate>
-     </MoviesList>
+    <MoviesList Movies="movies" />
 
 </div>
-<div>
-    <h2>Create a movie</h2>
 
-    <DummyTextbox placeholder="whatever" disabled="true" />
-</div>
+<button @onclick="AddNewMovie">Add new movie</button>
+
 @code{
-    private List<Movie> movies = new List<Movie>();
+    private List<Movie> movies;
     private Dictionary<string, object> dummyTextboxParameters = new Dictionary<string, object>() {
                                      { "placeholder", "new movie name 2"} ,
                                      { "disabled", "true"}
                                  };
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        //movies = new List<Movie>()
-        //    {
-        //       new Movie(){Title = "Spider-Man: Far From Home", ReleaseDate = new DateTime(2019, 7, 2)},
-        //       new Movie(){Title = "Moana", ReleaseDate = new DateTime(2016, 11, 23)},
-        //       new Movie(){Title = "Inception", ReleaseDate = new DateTime(2010, 7, 16)}
-        //    };
+        //await Task.Delay(2000);
+        movies = repository.GetMovies();
+    }
+
+    private void AddNewMovie()
+    {
+        movies.Add(new Movie() { Title = "Movie Sample", ReleaseDate = DateTime.Today });
     }
 }
