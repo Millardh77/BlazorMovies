@@ -14,6 +14,7 @@
 <button @onclick="AddNewMovie">Add new movie</button>
 
 @code{
+    private MoviesList moviesList;
     private List<Movie> movies;
     private Dictionary<string, object> dummyTextboxParameters = new Dictionary<string, object>() {
                                      { "placeholder", "new movie name 2"} ,
