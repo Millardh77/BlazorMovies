@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BlazorMovies.Server.Helpers;
+using BlazorMovies.Shared.DTOs;
 using BlazorMovies.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,9 +28,11 @@ namespace BlazorMovies.Server.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult<List<Person>>> Get()
+        public async Task<ActionResult<List<Person>>> Get([FromQuery]PaginationDTO paginationDTO)
         {
-            return await context.People.ToListAsync();
+            var queryable = context.People.AsQueryable();
+            await HttpContext.InsertPaginationParametersInResponse(queryable, paginationDTO.RecordsPerPage);
+            return await queryable.Paginate(paginationDTO).ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -81,6 +84,19 @@ namespace BlazorMovies.Server.Controllers
             await context.SaveChangesAsync();
             return NoContent();
 
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var person = await context.People.FirstOrDefaultAsync(x => x.Id == id);
+            if (person == null)
+            {
+                return NotFound();
+            }
+
+            context.Remove(person);
+            await context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }

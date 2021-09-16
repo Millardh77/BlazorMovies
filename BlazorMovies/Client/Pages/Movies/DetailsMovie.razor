@@ -55,6 +55,6 @@ DetailsMovieDTO model;
 
 protected async override Task OnInitializedAsync()
 {
-model = await moviesRepository.GetDetailsMovieDto(MovieId);
+    model = await moviesRepository.GetDetailsMovieDTO(MovieId);
 }
 }

@@ -1,4 +1,4 @@
-﻿@inject IPersonRepository personRespository;
+﻿@inject IPersonRepository personRepository
 
 <EditForm Model="Movie" OnValidSubmit="OnDataAnnotationsValidated">
     <DataAnnotationsValidator />
@@ -39,10 +39,11 @@
                        Label="Summary"
                        For="@(() => Movie.Summary)" />
     </div>
+
     <div class="form-group">
         <label>Genres:</label>
         <div>
-            <MultipleSelector Selected="Selected" NotSelected="NotSelected"></MultipleSelector>
+            <MultipleSelector Selected="Selected" NoSelected="NotSelected"></MultipleSelector>
         </div>
     </div>
 
@@ -98,8 +99,9 @@
 
     private async Task<IEnumerable<Person>> SearchMethod(string searchText)
     {
-        return await personRespository.GetPeopleByName(searchText);
+        return await personRepository.GetPeopleByName(searchText);
     }
+
     private async Task OnDataAnnotationsValidated()
     {
         Movie.MoviesGenres = Selected
@@ -113,3 +115,4 @@
         await OnValidSubmit.InvokeAsync(null);
     }
 }
+© 2021 GitHub, Inc.

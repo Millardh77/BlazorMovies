@@ -1,4 +1,5 @@
 ﻿using BlazorMovies.Client.Helpers;
+using BlazorMovies.Shared.DTOs;
 using BlazorMovies.Shared.Entities;
 using System;
 using System.Collections.Generic;
@@ -17,15 +18,11 @@ namespace BlazorMovies.Client.Repository
             this.httpService = httpService;
         }
 
-        public async Task<List<Person>> GetPeople()
+        public async Task<PaginatedResponse<List<Person>>> GetPeople(PaginationDTO paginationDTO)
         {
-            var response = await httpService.Get<List<Person>>(url);
-            if (!response.Success)
-            {
-                throw new ApplicationException(await response.GetBody());
-            }
-            return response.Response;
+            return await httpService.GetHelper<List<Person>>(url, paginationDTO);
         }
+
         public async Task<List<Person>> GetPeopleByName(string name)
         {
             var response = await httpService.Get<List<Person>>($"{url}/search/{name}");
@@ -50,6 +47,14 @@ namespace BlazorMovies.Client.Repository
         public async Task UpdatePerson(Person person)
         {
             var response = await httpService.Put(url, person);
+            if (!response.Success)
+            {
+                throw new ApplicationException(await response.GetBody());
+            }
+        }
+        public async Task DeletePerson(int Id)
+        {
+            var response = await httpService.Delete($"{url}/{Id}");
             if (!response.Success)
             {
                 throw new ApplicationException(await response.GetBody());

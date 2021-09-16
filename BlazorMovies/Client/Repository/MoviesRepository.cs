@@ -28,13 +28,27 @@ namespace BlazorMovies.Client.Repository
             return await httpService.GetHelper<MovieUpdateDTO>($"{url}/update/{id}");
         }
 
-        public async Task<DetailsMovieDTO> GetDetailsMovieDto(int id)
+        public async Task<DetailsMovieDTO> GetDetailsMovieDTO(int id)
         {
             return await httpService.GetHelper<DetailsMovieDTO>($"{url}/{id}");
         }
+
+        public async Task<PaginatedResponse<List<Movie>>> GetMoviesFiltered(FilterMoviesDTO filterMoviesDTO)
+        {
+            var responseHTTP = await httpService.Post<FilterMoviesDTO, List<Movie>>($"{url}/filter", filterMoviesDTO);
+            var totalAmountPages = int.Parse(responseHTTP.HttpResponseMessage.Headers.GetValues("totalAmountPages").FirstOrDefault());
+            var paginatedResponse = new PaginatedResponse<List<Movie>>()
+            {
+                Response = responseHTTP.Response,
+                TotalAmountPages = totalAmountPages
+            };
+
+            return paginatedResponse;
+        }
+
         public async Task<int> CreateMovie(Movie movie)
         {
-            var response = await httpService.Post<Movie,int>(url, movie);
+            var response = await httpService.Post<Movie, int>(url, movie);
             if (!response.Success)
             {
                 throw new ApplicationException(await response.GetBody());
@@ -42,9 +56,19 @@ namespace BlazorMovies.Client.Repository
 
             return response.Response;
         }
+
         public async Task UpdateMovie(Movie movie)
         {
             var response = await httpService.Put(url, movie);
+            if (!response.Success)
+            {
+                throw new ApplicationException(await response.GetBody());
+            }
+        }
+
+        public async Task DeleteMovie(int Id)
+        {
+            var response = await httpService.Delete($"{url}/{Id}");
             if (!response.Success)
             {
                 throw new ApplicationException(await response.GetBody());
