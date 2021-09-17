@@ -7,22 +7,29 @@ using System.Linq;
 using System.Threading.Tasks;
 using static BlazorMovies.Client.Shared.MainLayout;
 using MathNet.Numerics.Statistics;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace BlazorMovies.Client.Pages
 {
     public partial class Counter
     {
         private int currentCount = 0;
+
+        [CascadingParameter] private Task<AuthenticationState> AuthenticationState { get; set; }
         
-        public void IncrementCount()
+        public async Task IncrementCount()
         {
-            var array = new double[] { 1, 2, 3, 4, 5 };
-            var max = array.Maximum();
-            var min = array.Minimum();
+            var authState = await AuthenticationState;
+            var user = authState.User;
 
-            Console.WriteLine($"Max is {max} and min is {min}");
-
-            currentCount++;
+            if (user.Identity.IsAuthenticated)
+            {
+                currentCount++;
+            }
+            else
+            {
+                currentCount--;
+            }
         }
     }
 }

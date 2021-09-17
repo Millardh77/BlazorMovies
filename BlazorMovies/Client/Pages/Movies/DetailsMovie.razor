@@ -1,6 +1,7 @@
 ﻿@page "/movie/{MovieId:int}"
 @page "/movie/{MovieId:int}/{MovieName}"
 @inject IMoviesRepository moviesRepository
+@attribute [Authorize]
 
 @if (model == null)
 {
@@ -55,6 +56,6 @@ DetailsMovieDTO model;
 
 protected async override Task OnInitializedAsync()
 {
-    model = await moviesRepository.GetDetailsMovieDTO(MovieId);
+model = await moviesRepository.GetDetailsMovieDTO(MovieId);
 }
 }

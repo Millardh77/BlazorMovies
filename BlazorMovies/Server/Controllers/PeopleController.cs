@@ -35,8 +35,34 @@ namespace BlazorMovies.Server.Controllers
             return await queryable.Paginate(paginationDTO).ToListAsync();
         }
 
+
+        [HttpGet("detail/{id}")]
+        public async Task<ActionResult<DetailsPersonDTO>> Get(int id)
+        {
+            var person = await context.People.Where(x => x.Id == id)
+                .Include(x => x.MoviesActors).ThenInclude(x => x.Movie)
+                .FirstOrDefaultAsync();
+            if (person == null) { return NotFound(); }
+
+            person.MoviesActors = person.MoviesActors.OrderByDescending(x => x.Order).ToList();
+
+            var model = new DetailsPersonDTO();
+            model.Person = person;
+            model.Movies = person.MoviesActors.Select(x =>
+                new Movie
+                {
+                    Title = x.Movie.Title,
+                    Poster = x.Movie.Poster,
+                    Id = x.Person.Id
+                }).ToList();
+
+            return model;
+        }
+
+
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<Person>> Get(int id)
+        public async Task<ActionResult<Person>> GetDetails(int id)
         {
             var person = await context.People.FirstOrDefaultAsync(x => x.Id == id);
             if (person == null) { return NotFound(); }

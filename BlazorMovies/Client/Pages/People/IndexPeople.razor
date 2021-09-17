@@ -24,6 +24,7 @@
                 {
                     <tr>
                         <td>
+                            <p><a href="/person/visualize/@item.Id">@item.Name</a></p>
                             <a class="btn btn-success" href="/person/edit/@item.Id">Edit</a>
                             <button class="btn btn-danger" @onclick="@(() => DeletePerson(item.Id))">Delete</button>
                         </td>
@@ -39,6 +40,7 @@
     List<Person> People;
     PaginationDTO paginationDTO = new PaginationDTO() { RecordsPerPage = 1};
     private int totalAmountPages;
+    private string personURL = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
