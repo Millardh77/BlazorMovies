@@ -1,7 +1,7 @@
 ﻿@page "/person/edit/{PersonId:int}"
 @inject IPersonRepository personRepository
 @inject NavigationManager navigationManager
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin")]
 
 <h3>Edit Person</h3>
 

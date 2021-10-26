@@ -1,8 +1,7 @@
 ﻿@page "/genre/create"
 @inject IGenreRepository genreRepository
 @inject NavigationManager navigationManager
-@attribute [Authorize]
-
+@attribute [Authorize(Roles = "Admin")]
 <h3>Create Genre</h3>
 
 <GenreForm Genre="genre" OnValidSubmit="Create" />
